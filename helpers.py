@@ -1,17 +1,29 @@
+#### HELPER FUNCTIONS ####
+
+# imports and path variabes
+
 import os
 import siamese_comparator
-registered ={}
+registered = {}
 PATH = os.path.dirname(os.path.realpath(__file__))
-default_wav_path=PATH+'/'+'default.wav'
-threshold=0.15
+default_wav_path = PATH+'/'+'default.wav'
+threshold = 0.15
+
 
 def to_digits(text):
-    list1=[s for s in text if s.isdigit()]
+    """Return a string
+
+    Remove non numeric part of text
+    """
+    list1 = [s for s in text if s.isdigit()]
     str1 = ''.join(list1)
     return str1
-    
+
 
 def load_all_reg():
+    """
+        Load all registered users from root folder
+    """
     global registered
     root_folder = PATH+'/reg_emps'
     content = {}
@@ -25,9 +37,16 @@ def load_all_reg():
     registered=content    
 
 def is_reg(id):
+    """Returns a boolean
+        Answers the simple question. Is the id registered with voice data?
+    """    
     return id in registered.keys()
 
 def compare(id):
+    """Returns a boolean
+        Compare voice encoading with the saved embedings for the id
+    """ 
+
     list1=registered[id]
     list2=[default_wav_path for i in range(len(list1))]
     distance=siamese_comparator.average_distance(list1,list2)
@@ -35,6 +54,9 @@ def compare(id):
     return distance<=threshold
 
 def validate(text):
+    """Returns a boolean,string
+        cleans the text and if its a registered id it tries to validate it
+    """ 
     digits=to_digits(text)
     if is_reg(digits):
         return compare(digits), digits
@@ -44,4 +66,4 @@ def validate(text):
 
 
 load_all_reg()
-#print(validate('738608'))
+
